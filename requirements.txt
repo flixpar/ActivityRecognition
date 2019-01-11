@@ -1,0 +1,12 @@
+torch>=1.0.0
+torchvision>=0.2.1
+albumentations
+pretrainedmodels
+tqdm
+opencv-python
+pillow-simd
+numpy
+sklearn
+pandas
+matplotlib
+seaborn

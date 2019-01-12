@@ -13,7 +13,7 @@ class Args:
 	batch_size = 16                 # DEFAULT 16 (int)
 	weight_decay = 1e-4             # DEFAULT 0 (float)
 
-	model = "resnet_lstm"           # DEFAULT resnet_lstm (resnet_lstm | 3dresnet | i3d)
+	model = "resnet-lstm"           # DEFAULT resnet_lstm (resnet-lstm | resnet-tcn | 3dresnet | i3d)
 	model_config = {
 	}
 
@@ -30,6 +30,7 @@ class Args:
 		"rgb"
 	]
 
+	optimizer = "adam"              # DEFAULT adam (adam | sgd)
 	loss = "crossentropy"           # DEFAULT crossentropy (crossentropy | focal | mse)
 
 	weight_mode = ["inverse"]       # DEFAULT [inverse] ({inverse, sqrt} | None)
@@ -39,8 +40,8 @@ class Args:
 	workers = 4                     # DEFAULT 4 (int 0-32)
 
 	log_freq = 10                   # DEFAULT 10 (int)
-	n_val_eval_samples = None       # DEFAULT None (int | None)
-	n_train_eval_samples = None     # DEFAULT None (int | None)
+	n_vval_samples = None           # DEFAULT None (int | None)
+	n_tval_samples = 1024           # DEFAULT 1024 (int | None)
 
 	train_split = "train"           # DEFAULT train (train | val | trainval)
 	val_split   = "val"             # DEFAULT val (train | val | trainval)

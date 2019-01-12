@@ -8,8 +8,8 @@ from torch import nn
 import torch.nn.functional as F
 
 from utils.logger import Logger
-from utils.arg_handler import get_dataset, get_model, get_loss, get_train_sampler, get_scheduler
-from test import test
+from utils.arg_handler import (get_dataset, get_model, get_loss,
+		get_train_sampler, get_scheduler, get_optimizer)
 
 from args import Args
 args = Args()
@@ -19,9 +19,19 @@ primary_device = torch.device("cuda:{}".format(args.device_ids[0]))
 def main():
 
 	# datasets
-	train_dataset = get_dataset("train", args)
-	tval_dataset  = get_dataset("train-eval", args)
-	vval_dataset  = get_dataset("val", args)
+	dataset_class = get_dataset(args)
+
+	train_dataset = dataset_class(split=args.train_split, args=args,
+		transforms=args.train_augmentation, debug=False)
+
+	tval_dataset = dataset_class(split=args.train_split, args=args,
+		test_transforms=args.test_augmentation, debug=False,
+		n_samples=args.n_tval_samples)
+
+	vval_dataset = dataset_class(split=args.val_split, args=args,
+		test_transforms=args.test_augmentation, debug=False,
+		n_samples=args.n_vval_samples)
+
 
 	# sampling
 	train_sampler = get_train_sampler(args, train_dataset)
@@ -39,13 +49,13 @@ def main():
 		num_workers=args.workers, pin_memory=True)
 
 	# model
-	model = get_model(args).cuda()
+	model = get_model(args, train_dataset.n_classes).cuda()
 	model = nn.DataParallel(model, device_ids=args.device_ids)
 	model.to(primary_device)
 
 	# training
 	loss_func = get_loss(args, train_dataset.class_weights).to(primary_device)
-	optimizer = torch.optim.Adam(model.parameters(), lr=args.initial_lr, weight_decay=args.weight_decay)
+	optimizer = get_optimizer(args, model)
 	scheduler = get_scheduler(args, optimizer)
 
 	logger = Logger()
@@ -64,9 +74,6 @@ def main():
 
 	logger.save()
 	logger.save_model(model, "final")
-	logger.print()
-	logger.print("Test")
-	test(model)
 
 
 def train(model, train_loader, loss_func, optimizer, logger):

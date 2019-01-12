@@ -2,25 +2,27 @@ import torch
 from torch import nn
 import torch.optim.lr_scheduler
 from torch.utils.data import WeightedRandomSampler
+
+from models.lstm import ResNetLSTM, ResNetTCN
 from utils.lr_schedule import ConstantLR, PolynomialLR
 
-def get_dataset(split, args):
+def get_dataset(args):
+	if args.dataset == "kinetics":
+		raise NotImplementedError()
+	elif args.dataset == "charades":
+		raise NotImplementedError()
+	elif args.dataset == "ava":
+		raise NotImplementedError()
+	else:
+		raise ValueError("Invalid dataset selection.")
 
-	# train_dataset = ProteinImageDataset(split=args.train_split, args=args,
-	# 	transforms=args.train_augmentation, channels=args.img_channels, debug=False)
-
-	# train_static_dataset = ProteinImageDataset(split=args.train_split, args=args,
-	# 	test_transforms=args.test_augmentation, channels=args.img_channels, debug=False,
-	# 	n_samples=args.n_train_eval_samples)
-
-	# val_dataset  = ProteinImageDataset(split=args.val_split, args=args,
-	# 	test_transforms=args.test_augmentation, channels=args.img_channels, debug=False,
-	# 	n_samples=args.n_val_samples)
-
-	raise NotImplementedError()
-
-def get_model(args):
-	raise NotImplementedError()
+def get_model(args, n_classes):
+	if args.model == "resnet-lstm":
+		return ResNetLSTM(dataset.n_classes, *args.model_config)
+	elif args.model == "resnet-tcn":
+		return ResNetTCN(dataset.n_classes, *args.model_config)
+	else:
+		raise ValueError("Invalid model selection.")
 
 def get_loss(args, weights):
 
@@ -71,3 +73,10 @@ def get_scheduler(args, optimizer):
 	else:
 		return ConstantLR(optimizer)
 
+def get_optimizer(args, model):
+	if args.optimizer == "adam":
+		return torch.optim.Adam(model.parameters(), lr=args.initial_lr, weight_decay=args.weight_decay)
+	elif args.optimizer == "sgd":
+		return torch.optim.SGD(model.parameters(), lr=args.initial_lr, weight_decay=args.weight_decay)
+	else:
+		raise ValueError("Invalid optimizer selection.")

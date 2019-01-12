@@ -2,7 +2,7 @@ import torch
 from torch import nn
 import torchvision
 
-from models.modules import Resnet
+from models.modules import Resnet, TemporalConvNet
 
 
 class ResNetLSTM(nn.Module):
@@ -34,3 +34,20 @@ class ResNetLSTM(nn.Module):
 	def init_state(self, size, device):
 		return torch.zeros(size).to(device), torch.zeros(size).to(device)
 
+class ResNetTCN(nn.Module):
+
+	def __init__(self, n_classes=600, resnet_layers=101, hidden_size=1024, layers=2):
+		super(ResNetTCN, self).__init__()
+		self.cnn = Resnet(layers=resnet_layers, output_dims=512)
+		self.tcn = TemporalConvNet(512, [hidden_size]*layers)
+		self.fc = nn.Linear(hidden_size, n_classes)
+		self.temporal_pooling = "mean"
+
+	def forward(self, x):
+		x = self.cnn(x)
+		x = x.unsqueeze(0).permute(0, 2, 1)
+		output = self.tcn(x)
+		if self.temporal_pooling == "mean": output = torch.mean(output, dim=2)
+		else: output = output[:, :, -1]
+		output = self.fc(output)
+		return output

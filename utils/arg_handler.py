@@ -6,9 +6,11 @@ from torch.utils.data import WeightedRandomSampler
 from models.lstm import ResNetLSTM, ResNetTCN
 from utils.lr_schedule import ConstantLR, PolynomialLR
 
+from loaders.datasets import KineticsDataset
+
 def get_dataset(args):
 	if args.dataset == "kinetics":
-		raise NotImplementedError()
+		return KineticsDataset
 	elif args.dataset == "charades":
 		raise NotImplementedError()
 	elif args.dataset == "ava":
@@ -18,9 +20,9 @@ def get_dataset(args):
 
 def get_model(args, n_classes):
 	if args.model == "resnet-lstm":
-		return ResNetLSTM(dataset.n_classes, *args.model_config)
+		return ResNetLSTM(n_classes, *args.model_config)
 	elif args.model == "resnet-tcn":
-		return ResNetTCN(dataset.n_classes, *args.model_config)
+		return ResNetTCN(n_classes, *args.model_config)
 	else:
 		raise ValueError("Invalid model selection.")
 

@@ -21,17 +21,9 @@ def main():
 	# datasets
 	dataset_class = get_dataset(args)
 
-	train_dataset = dataset_class(split=args.train_split, args=args,
-		transforms=args.train_augmentation, debug=False)
-
-	tval_dataset = dataset_class(split=args.train_split, args=args,
-		test_transforms=args.test_augmentation, debug=False,
-		n_samples=args.n_tval_samples)
-
-	vval_dataset = dataset_class(split=args.val_split, args=args,
-		test_transforms=args.test_augmentation, debug=False,
-		n_samples=args.n_vval_samples)
-
+	train_dataset = dataset_class(split=args.train_split, config=args, debug=False)
+	tval_dataset = dataset_class(split=args.train_split,  config=args, n_samples=args.n_tval_samples, debug=False)
+	vval_dataset = dataset_class(split=args.val_split,    config=args, n_samples=args.n_vval_samples, debug=False)
 
 	# sampling
 	train_sampler = get_train_sampler(args, train_dataset)

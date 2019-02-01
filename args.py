@@ -1,5 +1,5 @@
 import torch
-import utils.transforms as tfms
+import transforms.spatial as tfms
 
 class Args:
 
@@ -24,7 +24,7 @@ class Args:
 
 	frame_size  = 256               # DEFAULT 256 (None | int)
 	clip_length = 50                # DEFAULT 50 (None | int)
-	frame_selection = "pad"         # DEFAULT pad (none | pad | loop | interpolate | center)
+	frame_selection = "random"      # DEFAULT random (random | random_replace | uniform | first | center)
 
 	features = [                    # DEFAULT [rgb] (rgb, flow, objects, pose)
 		"rgb"
@@ -38,6 +38,7 @@ class Args:
 
 	device_ids = [0,1]              # DEFAULT [0,] (list int 0-8)
 	workers = 4                     # DEFAULT 4 (int 0-32)
+	loader = "default"              # DEFAULT default (default | lintel | pyav | opencv | pil)
 
 	log_freq = 10                   # DEFAULT 10 (int)
 	n_vval_samples = None           # DEFAULT None (int | None)

@@ -9,7 +9,7 @@ class KineticsDataset(BaseDataset):
 
 	data_path = "kinetics"
 	loader_method = "lintel"
-	stats = {"mean": 0, "std": 0}
+	stats = {"mean": [0.485, 0.456, 0.406], "std": [0.229, 0.224, 0.225]}
 	n_classes = 600
 
 	def get_clips(self):
@@ -27,5 +27,5 @@ class KineticsDataset(BaseDataset):
 		vid_lengths = [lengths_data[i] for i in vid_ids]
 
 		clips = list(zip(videos, labels, vid_lengths, vid_ids))
-		clips = [{"path": c[0], "label": c[1], "length": c[2], "id": c[3]} for c in clips]
+		clips = [{"path": c[0], "label": c[1], "length": c[2], "id": c[3], "framerange": (0, c[2]-1)} for c in clips]
 		return clips

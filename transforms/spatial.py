@@ -28,9 +28,10 @@ class TestTimeCompose:
 
 	def __call__(self, frames):
 		n, c, h, w = frames.shape
-		output = torch.empty(self.n_copies, n, c, h, w)
+		output = torch.empty(self.n_copies + 1, n, c, h, w)
+		output[0] = frames.clone().detach()
 		for i, transform in enumerate(self.augmentations):
-			output[i] = transform(frames.clone().detach())
+			output[i+1] = transform(frames.clone().detach())
 		return output
 
 class NoOp:

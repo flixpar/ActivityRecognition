@@ -72,12 +72,12 @@ def train(model, train_loader, loss_func, optimizer, logger):
 	model.train()
 
 	losses = []
-	for i, (images, labels) in tqdm.tqdm(enumerate(train_loader), total=len(train_loader)):
+	for i, (clips, labels) in tqdm.tqdm(enumerate(train_loader), total=len(train_loader)):
 
-		images = images.to(primary_device, dtype=torch.float32, non_blocking=True)
+		clips = clips.to(primary_device, dtype=torch.float32, non_blocking=True)
 		labels = labels.to(primary_device, dtype=torch.float32, non_blocking=True)
 
-		outputs = model(images)
+		outputs = model(clips)
 		loss = loss_func(outputs, labels)
 
 		optimizer.zero_grad()
@@ -99,12 +99,12 @@ def evaluate(model, loader, loss_func, logger, splitname="val"):
 	targets = []
 
 	with torch.no_grad():
-		for images, labels in tqdm.tqdm(loader, total=len(loader)):
+		for clips, labels in tqdm.tqdm(loader, total=len(loader)):
 
-			images = images.to(primary_device, dtype=torch.float32, non_blocking=True).squeeze(0)
+			clips = clips.to(primary_device, dtype=torch.float32, non_blocking=True).squeeze(0)
 			labels = labels.to(primary_device, dtype=torch.float32, non_blocking=True).squeeze(0)
 
-			outputs = model(images)
+			outputs = model(clips)
 			loss = loss_func(outputs, labels).item()
 
 			pred = outputs

@@ -24,11 +24,6 @@ class BaseDataset(torch.utils.data.Dataset):
 		self.n_samples = n_samples
 		self.debug = debug
 
-		self.stats = {}
-		self.loader_method = "default"
-		self.data_path = ""
-		self.n_classes = 0
-
 		self.clips = self.get_clips()
 		if debug: self.clips = self.clips[:100]
 		if n_samples is not None: self.clips = random.sample(self.clips, n_samples)
@@ -116,14 +111,13 @@ class BaseDataset(torch.utils.data.Dataset):
 
 	def compute_class_weights(self):
 		labels = [clip["label"] for clip in self.clips]
-		unique_labels = list(set(labels))
-		counts = torch.tensor([labels.count(k) for k in unique_labels])
+		counts = torch.tensor([labels.count(k) for k in range(self.n_classes)], dtype=torch.float32)
 		weights = counts.max() / (self.n_classes * counts)
 		return weights
 
 	def compute_example_weights(self):
 		labels = [clip["label"] for clip in self.clips]
-		weights = torch.tensor([self.class_weights[l] for l in labels])
+		weights = torch.tensor([self.class_weights[l] for l in labels], dtype=torch.float32)
 		weights = weights / (weights.max() * self.n_classes)
 		return weights
 

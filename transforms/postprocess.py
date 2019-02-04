@@ -6,13 +6,13 @@ import cv2
 
 class Compose:
 
-	def __init__(self, *transformations):
+	def __init__(self, transformations):
 		self.transformations = transformations
 
 	def __call__(self, frames):
 
-		for transformations in self.transformations:
-			frames = transformations(frames)
+		for transform in self.transformations:
+			frames = transform(frames)
 
 		return frames
 

@@ -10,7 +10,7 @@ import torch.nn.functional as F
 
 class Compose:
 
-	def __init__(self, *augmentations):
+	def __init__(self, augmentations):
 		self.augmentations = augmentations
 
 	def __call__(self, frames):

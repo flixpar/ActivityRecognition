@@ -16,15 +16,17 @@ class ResNetLSTM(nn.Module):
 			num_layers = 2,
 			bidirectional = True,
 		)
-		self.fc = nn.Linear(hidden_size, n_classes)
 		self.statesize  = (layers*2, 1, hidden_size)
 		self.outputsize = 2 * hidden_size
 		self.state = self.init_state(self.statesize, None)
 		self.temporal_pooling = "mean"
+		self.fc = nn.Linear(self.outputsize, n_classes)
 
 	def forward(self, x):
+		n, f, c, h, w = x.shape
+		x = x.reshape(n*f, c, h, w)
 		x = self.cnn(x)
-		x = x.unsqueeze(0).permute(1, 0, 2)
+		x = x.reshape(n, f, -1).permute(1, 0, 2)
 		output, _ = self.lstm(x, self.init_state(self.statesize, x.device))
 		if self.temporal_pooling == "mean": output = torch.mean(output, dim=0)
 		else: output = output[-1]
@@ -44,8 +46,10 @@ class ResNetTCN(nn.Module):
 		self.temporal_pooling = "mean"
 
 	def forward(self, x):
+		n, f, c, h, w = x.shape
+		x = x.reshape(n*f, c, h, w)
 		x = self.cnn(x)
-		x = x.unsqueeze(0).permute(0, 2, 1)
+		x = x.reshape(n, f, -1).permute(0, 2, 1)
 		output = self.tcn(x)
 		if self.temporal_pooling == "mean": output = torch.mean(output, dim=2)
 		else: output = output[:, :, -1]

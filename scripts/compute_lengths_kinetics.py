@@ -28,7 +28,7 @@ def main():
 def get_vid_length(vid_fn):
 	vid_id = vid_fn.split('/')[-1][:-4]
 	vid = cv2.VideoCapture(vid_fn)
-	if not vid.isOpened(): return (vid_fn, 0)
+	if not vid.isOpened(): return (vid_id, 0)
 	n_frames = int(vid.get(cv2.CAP_PROP_FRAME_COUNT))
 	return (vid_id, n_frames)
 

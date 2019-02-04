@@ -10,7 +10,7 @@ class Args:
 	dataset = "kinetics"            # DEFAULT kinetics (kinetics | charades | ava | diva | icu)
 
 	epochs = 30                     # DEFAULT 30 (int 1-99)
-	batch_size = 16                 # DEFAULT 16 (int)
+	batch_size = 2                 # DEFAULT 16 (int)
 	weight_decay = 1e-4             # DEFAULT 0 (float)
 
 	model = "resnet-lstm"           # DEFAULT resnet_lstm (resnet-lstm | resnet-tcn | 3dresnet | i3d)

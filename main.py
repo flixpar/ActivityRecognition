@@ -75,7 +75,7 @@ def train(model, train_loader, loss_func, optimizer, logger):
 	for i, (clips, labels) in tqdm.tqdm(enumerate(train_loader), total=len(train_loader)):
 
 		clips = clips.to(primary_device, dtype=torch.float32, non_blocking=True)
-		labels = labels.to(primary_device, dtype=torch.float32, non_blocking=True)
+		labels = labels.to(primary_device, dtype=torch.long, non_blocking=True)
 
 		outputs = model(clips)
 		loss = loss_func(outputs, labels)
@@ -102,7 +102,7 @@ def evaluate(model, loader, loss_func, logger, splitname="val"):
 		for clips, labels in tqdm.tqdm(loader, total=len(loader)):
 
 			clips = clips.to(primary_device, dtype=torch.float32, non_blocking=True).squeeze(0)
-			labels = labels.to(primary_device, dtype=torch.float32, non_blocking=True).squeeze(0)
+			labels = labels.to(primary_device, dtype=torch.long, non_blocking=True).squeeze(0)
 
 			outputs = model(clips)
 			loss = loss_func(outputs, labels).item()

@@ -21,9 +21,9 @@ def main():
 	# datasets
 	dataset_class = get_dataset(args)
 
-	train_dataset = dataset_class(split=args.train_split, config=args, debug=False)
-	tval_dataset = dataset_class(split=args.train_split,  config=args, n_samples=args.n_tval_samples, debug=False)
-	vval_dataset = dataset_class(split=args.val_split,    config=args, n_samples=args.n_vval_samples, debug=False)
+	train_dataset = dataset_class(split=args.train_split, config=args, debug=args.debug)
+	tval_dataset  = dataset_class(split=args.train_split,  config=args, n_samples=args.n_tval_samples, debug=args.debug)
+	vval_dataset  = dataset_class(split=args.val_split,    config=args, n_samples=args.n_vval_samples, debug=args.debug)
 
 	# sampling
 	train_sampler = get_train_sampler(args, train_dataset)
@@ -37,8 +37,8 @@ def main():
 	tval_loader = torch.utils.data.DataLoader(tval_dataset, shuffle=False,
 		batch_size=1, num_workers=args.workers, pin_memory=True)
 
-	vval_loader = torch.utils.data.DataLoader(vval_dataset, shuffle=False, batch_size=1,
-		num_workers=args.workers, pin_memory=True)
+	vval_loader = torch.utils.data.DataLoader(vval_dataset, shuffle=False,
+		batch_size=1, num_workers=args.workers, pin_memory=True)
 
 	# model
 	model = get_model(args, train_dataset.n_classes).cuda()

@@ -26,7 +26,7 @@ class BaseDataset(torch.utils.data.Dataset):
 
 		self.clips = self.get_clips()
 		if debug: self.clips = self.clips[:100]
-		if n_samples is not None: self.clips = random.sample(self.clips, n_samples)
+		elif n_samples is not None: self.clips = random.sample(self.clips, n_samples)
 
 		self.frame_sampler = self.get_frame_sampler()
 		self.frame_loader  = self.get_loader()

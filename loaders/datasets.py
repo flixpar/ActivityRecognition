@@ -20,7 +20,7 @@ class KineticsDataset(BaseDataset):
 		with open(os.path.join(self.config.data_base_path, "kinetics/meta/vid_info.pkl"), "rb") as f:
 			vid_info = pickle.load(f)
 
-		indices_filter = [i for i, vid_id in enumerate(vid_ids) if vid_id in vid_info]
+		indices_filter = [i for i, vid_id in enumerate(vid_ids) if vid_id in vid_info and not vid_info[vid_id]["error"]]
 		videos  = [videos[i]  for i in indices_filter]
 		vid_ids = [vid_ids[i] for i in indices_filter]
 

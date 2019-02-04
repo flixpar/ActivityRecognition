@@ -25,7 +25,7 @@ class PyAvLoader:
 	def __call__(self, clip_info, frames):
 		container = av.open(clip_info["path"])
 		container.streams.video[0].thread_type = 'AUTO'
-		container.seek(frames[0], whence='frame', backward=False, any_frame=True)
+		container.seek(frames[0], whence='frame', backward=True, any_frame=True)
 		decoded_frames = None
 		for i, frame in enumerate(container.decode(video=0)):
 			if decoded_frames is None:

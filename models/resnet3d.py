@@ -9,6 +9,7 @@ from functools import partial
 class ResNet3D(nn.Module):
 
 	def __init__(self, layers=101, n_classes=600, frame_size=256, n_frames=50):
+		super(ResNet3D, self).__init__()
 
 		if layers == 10:
 			block_type   = BasicBlock
@@ -37,7 +38,7 @@ class ResNet3D(nn.Module):
 		self.model = ResNet(
 			block=block_type,
 			layers=layer_config,
-			n_classes=n_classes,
+			num_classes=n_classes,
 			sample_size=frame_size,
 			sample_duration=n_frames
 		)

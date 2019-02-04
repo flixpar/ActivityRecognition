@@ -31,7 +31,7 @@ class Args:
 	loss = "crossentropy"           # DEFAULT crossentropy (crossentropy | focal | mse)
 
 	# learning rate
-	initial_lr = 1e-5               # DEFAULT 1e-5 (float)
+	initial_lr = 1e-3               # DEFAULT 1e-3 (float)
 	lr_schedule = None              # DEFAULT None (None | poly | exp | step | multistep | cosine)
 	lr_schedule_params = {          # DEFAULT {} (dict)
 	}

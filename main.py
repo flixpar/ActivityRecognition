@@ -112,7 +112,7 @@ def evaluate(model, loader, loss_func, logger, splitname="val"):
 				pred = (0.5 * pred[0, :]) + (0.5 * pred[1:, :].mean(axis=0))
 				pred = pred[np.newaxis, :]
 
-			pred = torch.softmax(pred).argmax(dim=-1)
+			pred = torch.softmax(pred, dim=-1).argmax(dim=-1)
 			pred = pred.cpu().numpy()
 
 			labels = labels.cpu().numpy().astype(np.int).squeeze()

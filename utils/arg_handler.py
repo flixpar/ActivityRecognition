@@ -2,11 +2,12 @@ import torch
 from torch import nn
 import torch.optim.lr_scheduler
 from torch.utils.data import WeightedRandomSampler
-
-from models.lstm import ResNetLSTM, ResNetTCN
 from utils.lr_schedule import ConstantLR, PolynomialLR
 
-from loaders.datasets import KineticsDataset
+from models.lstm import ResNetLSTM, ResNetTCN
+from models.resnet3d import ResNet3D
+
+from loaders.datasets import KineticsDataset, AVADataset
 
 def get_dataset(args):
 	if args.dataset == "kinetics":
@@ -20,9 +21,17 @@ def get_dataset(args):
 
 def get_model(args, n_classes):
 	if args.model == "resnet-lstm":
-		return ResNetLSTM(n_classes, *args.model_config)
+		return ResNetLSTM(n_classes, **args.model_config)
 	elif args.model == "resnet-tcn":
-		return ResNetTCN(n_classes, *args.model_config)
+		return ResNetTCN(n_classes, **args.model_config)
+	elif args.model == "3dresnet":
+		n_layers = args.model_config["n_layers"] if "n_layers" in args.model_config else 101
+		return ResNet3D(
+			layers=n_layers,
+			n_classes=n_classes,
+			frame_size=args.frame_size,
+			n_frames=args.clip_length
+		)
 	else:
 		raise ValueError("Invalid model selection.")
 

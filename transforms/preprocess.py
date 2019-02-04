@@ -23,8 +23,8 @@ class ToTensor:
 
 	def __call__(self, frames):
 		frames = torch.from_numpy(frames).float()
-		frames = frames.permute(0, 3, 1, 2)
-		if self.flip_color: frames = frames[None, [2, 1, 0], None, None]
+		frames = frames.permute(3, 0, 1, 2) # (f,h,w,c) -> (c,f,h,w)
+		if self.flip_color: frames = frames[[2, 1, 0], None, None, None]
 		frames.div_(255)
 		return frames
 

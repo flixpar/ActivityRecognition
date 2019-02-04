@@ -23,7 +23,8 @@ class ResNetLSTM(nn.Module):
 		self.fc = nn.Linear(self.outputsize, n_classes)
 
 	def forward(self, x):
-		n, f, c, h, w = x.shape
+		n, c, f, h, w = x.shape
+		x = x.permute(0, 2, 1, 3, 4) # (n,c,f,h,w) -> (n,f,c,h,w)
 		x = x.reshape(n*f, c, h, w)
 		x = self.cnn(x)
 		x = x.reshape(n, f, -1).permute(1, 0, 2)
@@ -46,7 +47,8 @@ class ResNetTCN(nn.Module):
 		self.temporal_pooling = "mean"
 
 	def forward(self, x):
-		n, f, c, h, w = x.shape
+		n, c, f, h, w = x.shape
+		x = x.permute(0, 2, 1, 3, 4) # (n,c,f,h,w) -> (n,f,c,h,w)
 		x = x.reshape(n*f, c, h, w)
 		x = self.cnn(x)
 		x = x.reshape(n, f, -1).permute(0, 2, 1)

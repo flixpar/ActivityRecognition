@@ -19,8 +19,8 @@ class Compose:
 class Normalize:
 
 	def __init__(self, mean, std):
-		self.mean = torch.tensor(mean, dtype=torch.float32)[None, :, None, None]
-		self.std  = torch.tensor(std,  dtype=torch.float32)[None, :, None, None]
+		self.mean = torch.tensor(mean, dtype=torch.float32)[:, None, None, None]
+		self.std  = torch.tensor(std,  dtype=torch.float32)[:, None, None, None]
 
 	def __call__(self, frames):
 		frames.sub_(self.mean).div_(self.std)

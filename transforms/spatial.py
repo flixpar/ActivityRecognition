@@ -27,8 +27,8 @@ class TestTimeCompose:
 		self.n_copies = len(self.augmentations)
 
 	def __call__(self, frames):
-		n, c, h, w = frames.shape
-		output = torch.empty(self.n_copies + 1, n, c, h, w)
+		c, f, h, w = frames.shape
+		output = torch.empty(self.n_copies + 1, c, f, h, w)
 		output[0] = frames.clone().detach()
 		for i, transform in enumerate(self.augmentations):
 			output[i+1] = transform(frames.clone().detach())
@@ -51,7 +51,7 @@ class RandomCrop:
 		if self.padding > 0:
 			frames = F.pad(frames, self.padding, mode="constant", value=0)
 
-		n, c, h, w = frames.shape
+		c, f, h, w = frames.shape
 		dest_h, dest_w = self.size
 
 		if w == dest_w and h == dest_h:

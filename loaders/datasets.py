@@ -17,14 +17,14 @@ class KineticsDataset(BaseDataset):
 		videos = glob.glob(os.path.join(self.config.data_base_path, "kinetics/vid/*/*.mp4"))
 		vid_ids = [fn.split('/')[-1][:-4] for fn in videos]
 
-		with open(os.path.join(self.config.data_base_path, "kinetics/meta/vid_lengths.pkl"), "rb") as f:
-			lengths_data = pickle.load(f)
+		with open(os.path.join(self.config.data_base_path, "kinetics/meta/vid_info.pkl"), "rb") as f:
+			vid_info = pickle.load(f)
 
-		indices_filter = [i for i, vid_id in enumerate(vid_ids) if vid_id in lengths_data]
+		indices_filter = [i for i, vid_id in enumerate(vid_ids) if vid_id in vid_info]
 		videos  = [videos[i]  for i in indices_filter]
 		vid_ids = [vid_ids[i] for i in indices_filter]
 
-		vid_lengths = [lengths_data[i] for i in vid_ids]
+		vid_lengths = [vid_info[i]["n_frames"] for i in vid_ids]
 
 		text_labels = [vid_path.split('/')[-2] for vid_path in videos]
 		unique_labels = sorted(list(set(text_labels)))
@@ -69,16 +69,13 @@ class AVADataset(BaseDataset):
 
 		for clip in annotations:
 			clip["label"] = clip["action_id"]
+			clip["id"] = clip["video_id"]
 
-		vid_fps = {}
-		vid_fns = list(set([clip["path"] for clip in annotations]))
-		for vid_fn in vid_fns:
-			vid = cv2.VideoCapture(vid_fn)
-			if not vid.isOpened(): vid_fps[vid_fn] = 0
-			vid_fps[vid_fn] = int(vid.get(cv2.CAP_PROP_FPS))
+		with open(os.path.join(self.config.data_base_path, "ava/meta/vid_info.pkl"), "rb") as f:
+			vid_info = pickle.load(f)
 
 		for clip in annotations:
-			fps = vid_fps[clip[path]]
+			fps = vid_info[clip["id"]]["fps"]
 			mid_frame = clip["middle_frame_timestamp"] * fps
 			interval = (mid_frame - fps, mid_frame + fps)
 			clip["framerange"] = interval

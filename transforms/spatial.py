@@ -80,11 +80,11 @@ class RandomFlip:
 
 		if self.flip_horizontal:
 			if random.random() < self.p:
-				frames = frames[:, :, :, ::-1]
+				frames = frames.flip(3)
 
 		if self.flip_vertical:
 			if random.random() < self.p:
-				frames = frames[:, :, ::-1, :]
+				frames = frames.flip(2)
 
 		return frames
 

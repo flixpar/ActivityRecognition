@@ -40,15 +40,18 @@ class Args:
 	weight_mode = ["inverse"]       # DEFAULT [inverse] ({inverse, sqrt} | None)
 	weight_method = "sampling"      # DEFAULT loss (loss | sampling | None)
 
+	# sampling
+	n_train_samples = 10000         # DEFAULT 10000 (int | None)
+	n_vval_samples = None           # DEFAULT None  (int | None)
+	n_tval_samples = 1024           # DEFAULT 1024  (int | None)
+
 	# data loading
-	workers = 4                     # DEFAULT 4 (int 0-32)
+	workers = 8                     # DEFAULT 4 (int 0-32)
 	loader = "default"              # DEFAULT default (default | lintel | pyav | opencv | pil)
 	device_ids = [0,1]              # DEFAULT [0,1] (list int 0-8)
 
-	# evaluation
+	# logging
 	log_freq = 10                   # DEFAULT 10 (int)
-	n_vval_samples = None           # DEFAULT None (int | None)
-	n_tval_samples = 1024           # DEFAULT 1024 (int | None)
 
 	# augmentation
 	train_augmentation = tfms.Compose([

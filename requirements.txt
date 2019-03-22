@@ -9,5 +9,4 @@ sklearn
 pandas
 matplotlib
 seaborn
-lintel
-pyav
+av

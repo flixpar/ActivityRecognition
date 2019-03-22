@@ -27,11 +27,14 @@ class PyAvLoader:
 		container.streams.video[0].thread_type = 'AUTO'
 		container.seek(frames[0], whence='frame', backward=True, any_frame=True)
 		decoded_frames = None
+		j = 0
 		for i, frame in enumerate(container.decode(video=0)):
+			if i + frames[0] not in frames: continue
 			if decoded_frames is None:
 				decoded_frames = np.empty((len(frames), frame.height, frame.width, 3), dtype=np.uint8)
 			decoded_frames[i] = frame.to_ndarray(format='rgb24')
-			if i == len(frames)-1: break
+			j += 1
+			if j == len(frames): break
 		return decoded_frames
 
 class OpenCVLoader:

@@ -25,6 +25,7 @@ class KineticsDataset(BaseDataset):
 		vid_ids = [vid_ids[i] for i in indices_filter]
 
 		vid_lengths = [vid_info[i]["n_frames"] for i in vid_ids]
+		vid_lengths = [v-5 for v in vid_lengths]
 
 		text_labels = [vid_path.split('/')[-2] for vid_path in videos]
 		unique_labels = sorted(list(set(text_labels)))

@@ -6,7 +6,7 @@ class RandomFrameSamplerWithReplacement:
 		self.k = k
 
 	def __call__(self, frame_range):
-		frames = random.choices(range(frame_range[0], frame_range[1]), k=self.k)
+		frames = random.choices(range(frame_range[0], frame_range[1]+1), k=self.k)
 		frames = sorted(frames)
 		return frames
 
@@ -18,9 +18,9 @@ class RandomFrameSamplerWithoutReplacement:
 	def __call__(self, frame_range):
 		clip_len = frame_range[1] - frame_range[0]
 		if clip_len >= self.k:
-			frames = random.sample(range(frame_range[0], frame_range[1]), k=self.k)
+			frames = random.sample(range(frame_range[0], frame_range[1]+1), k=self.k)
 		else:
-			frames = random.choices(range(frame_range[0], frame_range[1]), k=self.k)
+			frames = random.choices(range(frame_range[0], frame_range[1]+1), k=self.k)
 		frames = sorted(frames)
 		return frames
 

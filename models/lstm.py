@@ -29,7 +29,7 @@ class ResNetLSTM(nn.Module):
 		x = self.cnn(x)
 		x = x.reshape(n, f, -1).permute(1, 0, 2)
 		self.lstm.flatten_parameters()
-		output, _ = self.lstm(x, self.state)
+		output, _ = self.lstm(x, self.init_state(self.statesize, x.device))
 		if self.temporal_pooling == "mean": output = torch.mean(output, dim=0)
 		else: output = output[-1]
 		output = self.fc(output)

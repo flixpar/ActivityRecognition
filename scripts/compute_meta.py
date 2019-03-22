@@ -52,6 +52,7 @@ def get_vid_info(vid_fn):
 	data = data["streams"]
 	if not data: return (vid_id, {"n_frames": 0, "n_frames_alt": 0, "error": True})
 	data = data[0]
+	if not "nb_read_frames" in data: return vid_id, {"n_frames": 0, "n_frames_alt": 0, "error": True}
 	info = {
 		"n_frames": int(data["nb_read_frames"]),
 		"n_frames_alt": int(data["nb_frames"]),

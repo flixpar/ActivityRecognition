@@ -15,7 +15,7 @@ class LintelLoader:
 
 	def __call__(self, clip_info, frames):
 		with open(clip_info["path"], "rb") as f: vid = f.read()
-		decoded_frames, width, height = lintel.loadvid_frame_nums(vid, frame_nums=frames)
+		decoded_frames, width, height = lintel.loadvid_frame_nums(vid, frame_nums=frames, should_seek=True)
 		decoded_frames = np.frombuffer(decoded_frames, dtype=np.uint8)
 		decoded_frames = np.reshape(decoded_frames, newshape=(len(frames), height, width, 3))
 		return decoded_frames
@@ -32,7 +32,7 @@ class PyAvLoader:
 			if i + frames[0] not in frames: continue
 			if decoded_frames is None:
 				decoded_frames = np.empty((len(frames), frame.height, frame.width, 3), dtype=np.uint8)
-			decoded_frames[i] = frame.to_ndarray(format='rgb24')
+			decoded_frames[j] = frame.to_ndarray(format='rgb24')
 			j += 1
 			if j == len(frames): break
 		return decoded_frames

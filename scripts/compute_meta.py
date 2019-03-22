@@ -6,6 +6,8 @@ import random
 import tqdm
 import pickle
 import multiprocessing as mp
+import subprocess
+import json
 
 import cv2
 import numpy as np
@@ -44,17 +46,21 @@ def get_videos_ava():
 
 def get_vid_info(vid_fn):
 	vid_id = vid_fn.split('/')[-1][:-4]
-	vid = cv2.VideoCapture(vid_fn)
-	if not vid.isOpened(): return (vid_id, {"n_frames": None, "fps": None, "width": None, "height": None, "error": True})
-	n_frames = int(vid.get(cv2.CAP_PROP_FRAME_COUNT))
-	fps = int(vid.get(cv2.CAP_PROP_FPS))
-	height = int(vid.get(cv2.CAP_PROP_FRAME_HEIGHT))
-	width = int(vid.get(cv2.CAP_PROP_FRAME_WIDTH))
+	cmd = ['/usr/local/bin/ffprobe', vid_fn, '-v', 'error', '-count_frames', '-select_streams', 'v', '-print_format', 'json', '-show_streams']
+	result = subprocess.run(cmd, stdout=subprocess.PIPE)
+	data = json.loads(result.stdout)
+	data = data["streams"]
+	if not data: return (vid_id, {"n_frames": 0, "n_frames_alt": 0, "error": True})
+	data = data[0]
 	info = {
-		"n_frames": n_frames,
-		"fps": fps,
-		"width": width,
-		"height": height,
+		"n_frames": int(data["nb_read_frames"]),
+		"n_frames_alt": int(data["nb_frames"]),
+		"duration": float(data["duration"]),
+		"height": int(data["height"]),
+		"width": int(data["width"]),
+		"aspect_ratio": str(data["display_aspect_ratio"]) if 'display_aspect_ratio' in data else "",
+		"fps": float(eval(data["avg_frame_rate"])),
+		"fps_alt": float(eval(data["r_frame_rate"])),
 		"error": False
 	}
 	return (vid_id, info)

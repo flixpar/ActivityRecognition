@@ -7,7 +7,7 @@ from utils.lr_schedule import ConstantLR, PolynomialLR
 from models.lstm import ResNetLSTM, ResNetTCN
 from models.resnet3d import ResNet3D
 
-from loaders.datasets import KineticsDataset, AVADataset
+from loaders.datasets import KineticsDataset, AVADataset, UCF101Dataset
 
 def get_dataset(args):
 	if args.dataset == "kinetics":
@@ -16,6 +16,8 @@ def get_dataset(args):
 		raise NotImplementedError()
 	elif args.dataset == "ava":
 		raise NotImplementedError()
+	elif args.dataset == "ucf":
+		return UCF101Dataset
 	else:
 		raise ValueError("Invalid dataset selection.")
 

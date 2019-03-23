@@ -82,3 +82,33 @@ class AVADataset(BaseDataset):
 			clip["framerange"] = interval
 
 		return annotations
+
+class UCF101Dataset(BaseDataset):
+
+	loader_method = "lintel"
+	stats = {"mean": [0.485, 0.456, 0.406], "std": [0.229, 0.224, 0.225]}
+	n_classes = 101
+
+	def get_clips(self):
+
+		videos = glob.glob(os.path.join(self.config.data_base_path, "ucf101/vid/*/*.webm"))
+		vid_ids = [fn.split('/')[-1][:-5] for fn in videos]
+
+		with open(os.path.join(self.config.data_base_path, "ucf101/meta/vid_info.pkl"), "rb") as f:
+			vid_info = pickle.load(f)
+
+		indices_filter = [i for i, vid_id in enumerate(vid_ids) if vid_id in vid_info and not vid_info[vid_id]["error"]]
+		videos  = [videos[i]  for i in indices_filter]
+		vid_ids = [vid_ids[i] for i in indices_filter]
+
+		vid_lengths = [vid_info[i]["n_frames"] for i in vid_ids]
+		vid_lengths = [v-5 for v in vid_lengths]
+
+		text_labels = [vid_path.split('/')[-2] for vid_path in videos]
+		unique_labels = sorted(list(set(text_labels)))
+		label_ids = dict(zip(unique_labels, list(range(len(unique_labels)))))
+		labels = [label_ids[lbl] for lbl in text_labels]
+
+		clips = list(zip(videos, labels, vid_lengths, vid_ids))
+		clips = [{"path": c[0], "label": c[1], "length": c[2], "id": c[3], "framerange": (0, c[2]-1)} for c in clips]
+		return clips

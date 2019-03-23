@@ -22,6 +22,8 @@ def main():
 		videos = get_videos_kinetics()
 	elif dataset == "ava":
 		videos = get_videos_ava()
+	elif dataset == "ucf101":
+		videos = get_videos_ucf()
 	else:
 		raise ValueError("Invalid dataset selected.")
 
@@ -44,8 +46,13 @@ def get_videos_ava():
 	videos = sorted(videos)
 	return videos
 
+def get_videos_ucf():
+	videos = glob.glob(os.path.join(base_dir, "ucf101/vid/", "*/*.webm"))
+	videos = sorted(videos)
+	return videos
+
 def get_vid_info(vid_fn):
-	vid_id = vid_fn.split('/')[-1][:-4]
+	vid_id = vid_fn.split('/')[-1].split('.')[0]
 	cmd = ['/usr/local/bin/ffprobe', vid_fn, '-v', 'error', '-count_frames', '-select_streams', 'v', '-print_format', 'json', '-show_streams']
 	result = subprocess.run(cmd, stdout=subprocess.PIPE)
 	data = json.loads(result.stdout)

@@ -42,7 +42,9 @@ class ResNet3D(nn.Module):
 			sample_size=frame_size,
 			sample_duration=n_frames
 		)
-		self.forward = self.model.forward
+
+	def forward(self, x):
+		return self.model(x)
 
 
 def conv3x3x3(in_planes, out_planes, stride=1):
@@ -61,11 +63,8 @@ def downsample_basic_block(x, planes, stride):
 	zero_pads = torch.Tensor(
 		out.size(0), planes - out.size(1), out.size(2), out.size(3),
 		out.size(4)).zero_()
-	if isinstance(out.data, torch.cuda.FloatTensor):
-		zero_pads = zero_pads.cuda()
-
+	zero_pads = zero_pads.to(x.device)
 	out = torch.cat([out.data, zero_pads], dim=1)
-
 	return out
 
 
@@ -171,7 +170,7 @@ class ResNet(nn.Module):
 
 		for m in self.modules():
 			if isinstance(m, nn.Conv3d):
-				m.weight = nn.init.kaiming_normal(m.weight, mode='fan_out')
+				m.weight = nn.init.kaiming_normal_(m.weight, mode='fan_out')
 			elif isinstance(m, nn.BatchNorm3d):
 				m.weight.data.fill_(1)
 				m.bias.data.zero_()

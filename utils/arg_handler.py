@@ -16,7 +16,7 @@ def get_dataset(args):
 		raise NotImplementedError()
 	elif args.dataset == "ava":
 		raise NotImplementedError()
-	elif args.dataset == "ucf":
+	elif args.dataset == "ucf101":
 		return UCF101Dataset
 	else:
 		raise ValueError("Invalid dataset selection.")
@@ -56,8 +56,7 @@ def get_loss(args, weights):
 
 def get_train_sampler(args, dataset):
 	if args.weight_method == "sampling":
-		n_samples = args.n_train_samples if args.n_train_samples is not None else len(dataset)
-		return WeightedRandomSampler(weights=dataset.example_weights, num_samples=n_samples)
+		return WeightedRandomSampler(weights=dataset.example_weights, num_samples=len(dataset))
 	else:
 		return None
 

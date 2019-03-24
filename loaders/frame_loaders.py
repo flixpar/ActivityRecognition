@@ -15,9 +15,10 @@ class LintelLoader:
 
 	def __call__(self, clip_info, frames):
 		with open(clip_info["path"], "rb") as f: vid = f.read()
-		decoded_frames, width, height = lintel.loadvid_frame_nums(vid, frame_nums=frames, should_seek=True)
+		decoded_frames, width, height, _ = lintel.loadvid(vid, should_random_seek=False, num_frames=clip_info["length"])
 		decoded_frames = np.frombuffer(decoded_frames, dtype=np.uint8)
-		decoded_frames = np.reshape(decoded_frames, newshape=(len(frames), height, width, 3))
+		decoded_frames = np.reshape(decoded_frames, newshape=(-1, height, width, 3))
+		decoded_frames = decoded_frames[frames]
 		return decoded_frames
 
 class PyAvLoader:

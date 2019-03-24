@@ -53,7 +53,7 @@ def get_videos_ucf():
 
 def get_vid_info(vid_fn):
 	vid_id = vid_fn.split('/')[-1].split('.')[0]
-	cmd = ['/usr/local/bin/ffprobe', vid_fn, '-v', 'error', '-count_frames', '-select_streams', 'v', '-print_format', 'json', '-show_streams']
+	cmd = ['ffprobe', vid_fn, '-v', 'error', '-count_frames', '-select_streams', 'v', '-print_format', 'json', '-show_streams']
 	result = subprocess.run(cmd, stdout=subprocess.PIPE)
 	data = json.loads(result.stdout)
 	data = data["streams"]

@@ -6,7 +6,7 @@ class Args:
 	debug = False                   # DEFAULT False (bool)
 
 	# dataset
-	dataset     = "kinetics"        # DEFAULT kinetics (kinetics | charades | ava | diva | icu)
+	dataset     = "kinetics"        # DEFAULT kinetics (kinetics | charades | ava | ucf101 | something)
 	train_split = "train"           # DEFAULT train (train | val | trainval)
 	val_split   = "val"             # DEFAULT val (train | val | trainval)
 	input_types = [                 # DEFAULT [rgb] (rgb, flow, objects, pose)

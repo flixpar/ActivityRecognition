@@ -91,18 +91,22 @@ class Logger:
 		with open(os.path.join(self.path, "train_eval.csv"), "w") as f:
 			csvwriter = csv.DictWriter(f, ["it"] + sorted(train_metrics))
 			csvwriter.writeheader()
-			for it, score in enumerate(self.scores):
+			it = 0
+			for score in self.scores:
 				row = {k.split('-')[-1]:v for k,v in score.items() if "train" in k}
 				if not row: continue
+				else: it += 1
 				row["it"] = it
 				csvwriter.writerow(row)
 
 		with open(os.path.join(self.path, "eval.csv"), "w") as f:
 			csvwriter = csv.DictWriter(f, ["it"] + sorted(val_metrics))
 			csvwriter.writeheader()
-			for it, score in enumerate(self.scores):
+			it = 0
+			for score in self.scores:
 				row = {k.split('-')[-1]:v for k,v in score.items() if "val" in k}
 				if not row: continue
+				else: it += 1
 				row["it"] = it
 				csvwriter.writerow(row)
 
@@ -124,7 +128,6 @@ class Logger:
 			color = "orange"
 		)
 		lossplot.set_title("Train loss")
-		plt.ylim(0, 1)
 		lossplot.figure.savefig(os.path.join(self.path, "train_loss.png"))
 
 		plt.clf()

@@ -56,7 +56,9 @@ def get_loss(args, weights):
 
 def get_train_sampler(args, dataset):
 	if args.weight_method == "sampling":
-		return WeightedRandomSampler(weights=dataset.example_weights, num_samples=len(dataset))
+		num_samples = args.n_train_samples if args.n_train_samples is not None else len(dataset)
+		num_samples = num_samples if not args.debug else 100
+		return WeightedRandomSampler(weights=dataset.example_weights, num_samples=num_samples)
 	else:
 		return None
 

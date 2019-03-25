@@ -21,24 +21,9 @@ def main():
 	# datasets
 	dataset_class = get_dataset(args)
 
-	train_dataset = dataset_class(split=args.train_split, config=args, n_samples=args.n_train_samples, debug=args.debug)
+	train_dataset = dataset_class(split=args.train_split, config=args, debug=args.debug)
 	tval_dataset  = dataset_class(split=args.train_split, config=args, n_samples=args.n_tval_samples,  debug=args.debug)
 	vval_dataset  = dataset_class(split=args.val_split,   config=args, n_samples=args.n_vval_samples,  debug=args.debug)
-
-	# sampling
-	train_sampler = get_train_sampler(args, train_dataset)
-	shuffle = (train_sampler is None)
-
-	# dataloaders
-
-	train_loader = torch.utils.data.DataLoader(train_dataset, shuffle=shuffle, sampler=train_sampler,
-		batch_size=args.batch_size, num_workers=args.workers, pin_memory=True)
-
-	tval_loader = torch.utils.data.DataLoader(tval_dataset, shuffle=False,
-		batch_size=1, num_workers=args.workers, pin_memory=True)
-
-	vval_loader = torch.utils.data.DataLoader(vval_dataset, shuffle=False,
-		batch_size=1, num_workers=args.workers, pin_memory=True)
 
 	# model
 	model = get_model(args, train_dataset.n_classes).cuda()
@@ -56,9 +41,9 @@ def main():
 	for epoch in range(1, args.epochs+1):
 		logger.print("Epoch {}".format(epoch))
 		scheduler.step()
-		train(model, train_loader, loss_func, optimizer, logger)
-		t_scores = evaluate(model, tval_loader, loss_func, logger, splitname="train")
-		v_scores = evaluate(model, vval_loader, loss_func, logger, splitname="val")
+		train(model, train_dataset, loss_func, optimizer, logger)
+		t_scores = evaluate(model, tval_dataset, loss_func, logger, splitname="train")
+		v_scores = evaluate(model, vval_dataset, loss_func, logger, splitname="val")
 		logger.save()
 		if v_scores["acc"] > max_score:
 			logger.save_model(model.module, epoch)
@@ -68,8 +53,14 @@ def main():
 	logger.save_model(model, "final")
 
 
-def train(model, train_loader, loss_func, optimizer, logger):
+def train(model, train_dataset, loss_func, optimizer, logger):
 	model.train()
+
+	# create dataloader
+	train_sampler = get_train_sampler(args, train_dataset)
+	shuffle = (train_sampler is None)
+	train_loader = torch.utils.data.DataLoader(train_dataset, shuffle=shuffle, sampler=train_sampler,
+		batch_size=args.batch_size, num_workers=args.workers, pin_memory=True)
 
 	losses = []
 	for i, (clips, labels) in tqdm.tqdm(enumerate(train_loader), total=len(train_loader)):
@@ -91,8 +82,11 @@ def train(model, train_loader, loss_func, optimizer, logger):
 			tqdm.tqdm.write("Train loss: {}".format(mean_loss))
 			logger.log("Train loss: {}".format(mean_loss))
 
-def evaluate(model, loader, loss_func, logger, splitname="val"):
+def evaluate(model, dataset, loss_func, logger, splitname="val"):
 	model.eval()
+
+	loader = torch.utils.data.DataLoader(dataset, shuffle=False,
+		batch_size=1, num_workers=args.workers, pin_memory=True)
 
 	losses = []
 	preds = []

@@ -6,6 +6,7 @@ from utils.lr_schedule import ConstantLR, PolynomialLR
 
 from models.lstm import ResNetLSTM, ResNetTCN
 from models.resnet3d import ResNet3D
+from models.i3d import InceptionI3D
 
 from loaders.datasets import KineticsDataset, AVADataset, UCF101Dataset
 
@@ -34,6 +35,8 @@ def get_model(args, n_classes):
 			frame_size=args.frame_size,
 			n_frames=args.clip_length
 		)
+	elif args.model == "i3d":
+		return InceptionI3D(n_classes=n_classes, **args.model_config)
 	else:
 		raise ValueError("Invalid model selection.")
 

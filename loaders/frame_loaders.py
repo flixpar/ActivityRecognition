@@ -14,11 +14,16 @@ import av
 class LintelLoader:
 
 	def __call__(self, clip_info, frames):
+
+		unique_frames = sorted(list(set(frames)))
+		frame_inds = [unique_frames.index(f) for f in frames]
+
 		with open(clip_info["path"], "rb") as f: vid = f.read()
-		decoded_frames, width, height, _ = lintel.loadvid(vid, should_random_seek=False, num_frames=clip_info["length"])
+		decoded_frames, width, height = lintel.loadvid_frame_nums(vid, frame_nums=unique_frames, should_seek=True)
 		decoded_frames = np.frombuffer(decoded_frames, dtype=np.uint8)
 		decoded_frames = np.reshape(decoded_frames, newshape=(-1, height, width, 3))
-		decoded_frames = decoded_frames[frames]
+
+		decoded_frames = decoded_frames[frame_inds]
 		return decoded_frames
 
 class PyAvLoader:

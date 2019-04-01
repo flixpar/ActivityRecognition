@@ -29,19 +29,19 @@ class LintelLoader:
 class PyAvLoader:
 
 	def __call__(self, clip_info, frames):
-		container = av.open(clip_info["path"])
-		container.streams.video[0].thread_type = 'AUTO'
-		container.seek(frames[0], whence='frame', backward=True, any_frame=True)
-		decoded_frames = None
-		j = 0
-		for i, frame in enumerate(container.decode(video=0)):
-			if i + frames[0] not in frames: continue
-			if decoded_frames is None:
-				decoded_frames = np.empty((len(frames), frame.height, frame.width, 3), dtype=np.uint8)
-			decoded_frames[j] = frame.to_ndarray(format='rgb24')
-			j += 1
-			if j == len(frames): break
-		return decoded_frames
+		with av.logging.Capture() as logs:
+			container = av.open(clip_info["path"])
+			container.seek(frames[0], whence='frame', backward=True, any_frame=True)
+			init_frame = next(container.decode(video=0))
+			decoded_frames = np.empty((len(frames), init_frame.height, init_frame.width, 3), dtype=np.uint8)
+			decoded_frames[0] = init_frame.to_ndarray(format='rgb24')
+			j = 1
+			for i, frame in enumerate(container.decode(video=0)):
+				if i + frames[0] not in frames: continue
+				decoded_frames[j] = frame.to_ndarray(format='rgb24')
+				j += 1
+				if j == len(frames): break
+			return decoded_frames
 
 class OpenCVLoader:
 
